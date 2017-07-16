@@ -1,0 +1,22 @@
+\section{approach}
+
+This project creates a tool called Exampler that takes as input a Haskell source file and the name of a function within that source file.
+Exampler will generate a set of representative examples for the specified function and watch the source file for changes to know when to update the set of examples.
+	
+We define a set of representative examples as a set of examples that provides significant or complete branch coverage of the specified function.
+The program attempts to generate such a set by repeatedly testing the function on random examples and then observing differences in branch coverage.
+If an example improves branch coverage, then it is kept as part of the representative set.
+Given enough random examples, it is possible to get full branch coverage of all reachable branches in a program.
+Since only examples that improve branch coverage are included in the set, we have also constructed an example set that is small enough for the programmer to understand.
+
+As for example reuse, it appears that it would be as simple as keeping the generated examples in memory.
+The issue is that Haskell is a compiled language, so the program would need to be recompiled whenever the source file of interest is modified.
+The obvious solution is to write the examples to a file, but this does not work for examples for higher-order functions since first-order functions have no textual representation in the compiled program.
+The only way to deal with this is to dynamically reload the module as it changes so the program can keep all of the examples in memory.
+
+Concerning polymorphic functions, the program inspects the type structure of the function of interest and builds a new type by replacing the type variables with concrete types that are valid given the function's context.
+The concrete type can then be used to generate examples for the polymorphic function.
+
+All of these features result in a robust tool that can generate sets of representative examples for a function and maintain them as the function changes.
+Furthermore, the program is just a simple executable wrapper around a reusable module that can be leveraged in any cooperative programming or live programming environment.
+

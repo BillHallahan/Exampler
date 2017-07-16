@@ -1,0 +1,17 @@
+\section{Related Work}
+
+The concept of live programming has been used to build tools for continuous feedback in a number of languages, but these have mostly been for visual languages such as Morphic [5] and PureData [7], or languages designed specifically for live programming such as YinYang [6].
+While some of these tools like YinYang are able to provide more information about the program being executed through built-in language features, the language itself is not commonly used.
+The overarching cooperative programming project that Exampler is a part of aims to support Haskell, a language prevalent throughout academia and industry.
+
+Specific to Haskell, there is a tool called QuickCheck [2] that tries to check specific properties of a function by testing if the property holds for a large volume of random examples.
+While this is useful for testing once the code is written, it generates a massive number of examples and is not easily processed and understood by the programmer.
+Even so, QuickCheck is still quite useful and some of its modules are leveraged by Exampler to generate random examples.
+
+Finally, there are many tools and IDEs that will automatically run tests for a program as the programmer updates it.
+These include Guard for Ruby and NCrunch for the Visual Studio IDE.
+While these are certainly handy, they require the programmer to write tests beforehand instead of giving automatic feedback.
+Also, since the tests are manually entered, this approach does not work when there are major structural changes (i.e., type signature changes) to the code base.
+
+
+

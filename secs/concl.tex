@@ -1,0 +1,42 @@
+\section{Future Work}
+Besides implementing the other components of the cooperative programming environment, there is much work to be done to improve Exampler.
+Because the project is a critical component of a larger system, the goal was to support as much of Haskell as quickly as possible so that the other components could have access to an example generator.
+Consequently, the individual aspects of Exampler are somewhat naive.
+
+One such aspect is generating a representative set of examples.
+The current approach is entirely random.
+While using a slew of random examples should always be able to find a representative set of examples eventually, the usefulness of these examples decreases as the time it takes to find them increases.
+If the feedback does not feel immediate anymore, then the programmer will not be able to rely on the tool.
+A more structured way to find a set of representative examples is through concolic execution [8].
+Concolic is a portmanteau of concrete and symbolic execution which involves trying a random concrete input while following the execution symbolically to obtain the constraints along that execution path.
+The last constraint is then negated and sent, along with the other constraints, to a solver to find a new input that will follow a different execution path.
+This process then continues until input examples are generated for all paths or all paths up to a certain depth.
+Concolic execution would likely perform faster and more consistently in most cases, but the implementation requires a symbolic execution engine and none currently exist for Haskell.
+A possible alternative is to use a symbolic execution engine that targets an intermediate language used by the Haskell compiler such as C or LLVM (e.g., Cute [8] or KLEE [1], respectively).
+Concolic execution has been implemented for another functional language, Erlang, as a tool called CutEr [3], which could serve as a model for a Haskell implementation.
+
+A second area for improvement concerns the interpretation of a representative set of examples.
+Just providing one example for each branch of a function may not provide adequate information to the programmer.
+For example, if the programmer is unaware of some edge cases and does not distinguish them from another branch, then having one example from that branch might not identify those edge cases, and the programmer will assume that his or her code is correct.
+While providing more examples can mitigate this issue, it also risks providing too much information for the programmer to quickly process and understand.
+Another solution could be to ask the programmer to specify certain properties that the function should satisfy in order to identify when that property does not hold, as is done in QuickCheck, but this requires more input from the programmer and disrupts the development process.
+These advantages and drawbacks suggest that there is a tradeoff between ease-of-use and usefulness, and there is much research to be done to determine where the optimum lies.
+
+\section{Conclusion}
+
+Exampler is a robust tool that integrates random examples with test coverage to provide a representative set of examples for a specified function.
+By dynamically reloading code as it is being modified and using metaprogramming to manipulate types, it supports all kinds of functions including higher-order and polymorphic functions.
+As it is meant to be a programming tool to speed up development, Exampler is extremely easy to use.
+To use the tool, the programmer just needs to run Exampler 
+%
+\codeinline{<path to source file> <name of function within source file>}
+%
+, and the program will maintain a set of representative examples, notify the programmer of compilation errors, and recompile if the type signature of the function changes, all without any additional input from the programmer.
+
+Having a constantly updating set of representative examples while coding benefits novice and veteran programmers alike.
+This immediate feedback allows veteran programmers to improve their development iteration speed and helps novice programmers draw connections between their actions and the program's output.
+Moreover, representative examples capture the gist of a program and can be used to help programmers comprehend obfuscated or poorly maintained code.
+
+While Exampler is a convenient tool on it's own, it's main purpose is to be integrated into a cooperative programming environment for Haskell.
+Once implemented, this programming environment will allow programmers to manipulate the examples to synthesize updated code, essentially automating debugging.
+That being said, there is much work to be done and other members of Professor Piskac's group are hard at work on the code synthesis engine.

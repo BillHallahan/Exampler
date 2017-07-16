@@ -1,0 +1,77 @@
+\section{Introduction}
+
+\subsection{Generating an Example}
+
+An example is just a set of arguments and the result of executing the function with those arguments.
+Since Haskell is a statically-typed language, an example generator needs to be able to generate examples in a type-safe manner.
+The example generating function takes arbitrary functions as arguments, so it only knows that the function matches the polymorphic type for all functions, \codeinline{a -> b}.
+This means that the example generator cannot generate random values for all arguments at once as it only knows the type of the first argument, \codeinline{a}.
+Exampler solves this by generating a random value for the first argument and then currying the function with that value to produce a new function \codeinline{b -> c}.
+This process is repeated until the function is fully evaluated and a full set of arguments is accumulated as well as a result.
+
+The random values are generated via QuickCheck.
+QuickCheck defines a type class, Arbitrary, and instances of Arbitrary have a function, arbitrary, that generates a random value of that type.
+If a programmer wants to use Exampler (or QuickCheck) for custom data types as arguments, then he or she will have to define an Arbitrary instance for them so the program can generate random values for that type.
+
+Another type-related difficulty is representing the resulting example since the arguments and result can be of any type, but the example generator can only have one return type.
+QuickCheck gets around this by requiring arguments and results to be instances of the Show type class so they can be represented as strings, but this is not compatible with supporting higher-order functions since arbitrary functions cannot be represented as a string without some loss of information.
+If Exampler were to use this method, then it could not reuse any examples that have functions as arguments.
+
+
+To handle the case of functions as examples, Exampler uses the Existential Quantification language extension for Haskell that allows types that share a common type class to be treated as a single type.
+Since all arguments are required to be instances of Arbitrary and all result types are automatically instances of Exampleable (a type class defined by Exampler), an example can be represented as a list of AnyArbitrary and the result can be represented as AnyExampleable (AnyArbitrary and AnyExampleable are data types that wrap any instance of the Arbitrary or Exampleable type classes, respectively).
+When the example is recycled, the program can unwrap the arguments and do a type-safe cast to their original types during evaluation.
+
+\subsection{Generating an Example for a Polymorphic Function}
+
+Since instances of type classes in Haskell are usually defined for concrete types, the example generator described in the previous section cannot support polymorphic functions out of the box.
+Instead of requiring the programmer to add the Arbitrary and Exampleable context restrictions to his or her polymorphic functions, Exampler automatically creates a concrete version of the function with appropriate concrete types.
+
+Exampler accomplishes this by using Template Haskell, a language extension that allows for compile-time metaprogramming through abstract syntax tree manipulation.
+Given the name of a function, Exampler uses Template Haskell to look up its type represented as an abstract syntax tree.
+The program then traverses that abstract syntax tree and replaces type and type constructor variables with concrete type and type constructors, respectively.
+This process is complicated by polymorphic functions that have contexts that restrict type and type constructor variables to specific type classes.
+Before traversing the abstract syntax tree, the program processes these constraints to build a data structure that maps the names of the variables to a set of concrete types or type constructors that adhere to the constraints.
+This map is then used in the variable replacement step.
+The set of possible types is returned in an unmeaningful order, so there is also a list of of default preferred types and type constructors that will be chosen if possible (e.g., Int for types, List for type constructors), otherwise the first valid type is chosen.
+
+This method allows the program to generate examples for any polymorphic function.
+Moreover, since Template Haskell generates code at compile-time, type safety is guaranteed.
+
+\subsection{Generating a Representative Set of Examples}
+
+The next step after generating examples is to identify a representative set of examples.
+As mentioned earlier, we consider a representative set to be one that has adequate branch coverage.
+Haskell has a convenient tool called Haskell Program Coverage (HPC) [4] that tracks program coverage by instrumenting programs at compile-time.
+This tool also provides a Haskell library that allows one to get program coverage while the program is executing instead of only after the program exits.
+After each example is generated and executed, the program writes the coverage data to a temporary file and runs HPC to generate a report.
+This report is compared to the one for the previous iteration to see if the example covered any previously uncovered branches.
+If it does, then it is shown to the programmer and is kept for future reuse.
+When HPC reports full branch coverage, then Exampler will have generated a set of representative examples.
+
+
+\subsection{Handling Code Updates}
+
+The value of Exampler is that it will continually update the example set as the code changes.
+As described in the approach section, for example reuse to work on higher-order functions, the program cannot exit and recompile each time the source file of interest is updated.
+The solution is to dynamically load the file via the GHC (Glasgow Haskell Compiler) API.
+
+One ramification of dynamically loading modules is that accessing functions in the dynamically loaded module is inherently unsafe because there is no way to know the types of these functions when the main program is compiled.
+To combat this, Exampler will first generate a program that will import the modified module and print the updated type of the function of interest.
+Exampler can then read the output of that program and manually check the types.
+Besides adding type safety, this also enables Exampler to detect when the type signature of the function changes so it can respond by recompiling and restarting.
+Additionally, this step requires the modified module to compile successfully so Exampler can catch compilation errors early and notify the programmer.
+
+Exampler also does not import the actual source file but makes a temporary copy instead.
+This is necessary because HPC reports coverage by module name, so Exampler assigns a unique module name to each copy.
+It also allows Exampler to automatically export the function in the duplicate module so the programmer does not have to worry about visibility.
+
+\subsection{Generating the Program}
+
+The final issue to overcome also deals with type safety.
+In order for Exampler to safely build a concrete type for the function of interest, it needs to know the type of the function at compile-time.
+Unfortunately, Exampler will not know the source file or function until run-time.
+To remedy this, Exampler actually generates a program that does the example generation for the provided file and function when the programmer runs it.
+This generated program communicates with the main program through pipes.
+It will notify the main program when the type signature of the function changes so that the main program can recompile the generated program.
+The full system architecture is diagrammed below.

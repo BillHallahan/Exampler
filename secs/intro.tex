@@ -1,0 +1,49 @@
+\section{Introduction}
+
+
+Over the years, the lives of programmers have been made dramatically easier with the continuous development of excellent programming tools.
+In the past decade, domains like deployment and databases have been revolutionized by tools like container-based infrastructure and NoSQL databases.
+In spite of this, the way programmers actually develop software on a daily basis has been relatively stagnant.
+The process is still writing code, compiling it, and then finally testing it.
+Since actually testing code is steps removed from writing it, programmers are constantly simulating the execution of their code in their head and only occasionally testing it.
+If the program does not work as expected, then the programmer will have to divert his attention to debugging before continuing to write code.
+The more code the programmer writes before testing, the more code he or she will have to sift through when debugging.
+
+Live programming seeks to improve this by making the process less sequential, thereby increasing the speed of development iteration.
+This is often done by executing the code on a number of examples as it is being modified, thus the programmer immediately knows how his or her changes are affecting the software being developed.
+With this information, the programmer can instantly identify when the computer's execution diverges from his or her mental simulation and respond accordingly.
+This prospect of improved development efficiency has drawn institutions such as Microsoft Research to investigating this new type of programming environment [6].
+
+Professor Piskac's group at Yale is exploring an extension of live programming by developing a cooperative programming environment in which the code-example interaction is bidirectional.
+This means that not only will changes to the code be reflected in the examples, but changes to the examples will be reflected in the code.
+By changing the output of an example, the programmer can trigger a code synthesis engine to modify his or her program to output the correct result.
+This is a difficult feat to achieve and incorporates a variety of components including generating examples, error localization, error repair, code synthesis, tool development, and editor integration.
+This paper concerns the first piece of this complex system, example generation.
+
+The group's implementation of a cooperative programming environment targets Haskell, a modern, functional programming language.
+While Haskell is not as widespread as established imperative languages like Java or Python, it is rapidly increasing in popularity and can serve as an excellent introduction to functional programming or programming in general.
+Due to the lack of side effects and immutable data structures, functional languages have recently made a resurgence in response to the growing need for concurrency when scaling applications.
+A cooperative programming environment for Haskell will lower the barrier to entry and promote the learning and usage of functional languages.
+
+
+\subsection{Problem}
+
+Examples are the bread and butter of cooperative programming.
+They are both the source of feedback for the programmer as well as the initiator of code synthesis.
+As a result, the quality of examples directly influences the quality of feedback the programmer receives as well as the potential avenues for code synthesis the programmer can exploit.
+
+Given that the purpose of cooperative programming is to serve the programmer, it is imperative that the examples generated are human processable.
+This idea of being human processable is two-fold.
+First, the environment should not inundate the programmer with thousands of random, potentially redundant examples, but should present a small set of representative examples that is just large enough to capture the behavior of the program.
+If the programmer cannot get the feedback he or she needs at a glance, then the development process once again becomes segmented instead of continuous.
+Second, the examples should stay as consistent as possible even as the code evolves.
+Even if the set of generated examples is representative for each iteration of the code, if the values of the arguments in the examples changes between iterations, then the programmer will have to mentally reevaluate the examples every time to see which section of the code each one reflects.
+Therefore, example reuse is critical.
+Other challenges relevant to example generation are more specific to the target language, Haskell.
+Since Haskell is a functional language, Haskell programmers often write higher-order functions to simplify common operations.
+To test these functions, the examples will have to include first-order functions as arguments.
+In addition, Haskell has the notion of type variables and type classes that allow for polymorphic functions with contexts that restrict type variables to be of certain type classes.
+This poses a difficulty as examples are always composed of concrete types.
+Because these features are used ubiquitously in Haskell development, example generation in a cooperative programming environment for Haskell should support them.
+
+
