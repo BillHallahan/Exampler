@@ -1,0 +1,46 @@
+\section{Synthesis in Live Programming}
+\label{sec:goal}
+
+Writing a program is a relatively static process: a programmer writes some code and, after a successful compilation, can observe and inspect its behavior. If the code does not actually implement the programmer's intentions, she can correct the program and repeat the process.
+
+The live programming paradigm (Sec.~\ref{sec:live}) advocates a more dynamic programming cycle that allows the programmer to inspect and understand the code as it is written. While existing incarnations of live programming environments focus on programs with graphical output, we propose creating a general-purpose live programming framework.
+
+We believe that a programmer gains a better understanding of her code through observing its execution on a sequence of representative inputs. Thus, we propose extending the programming environment with an interface to explore the code's execution on a set of example input-output pairs. This set of examples can be automatically generated, and optionally supplemented by the developer. This could be seen as an advanced debugging tool that traces execution on several values in parallel. Fig.~\ref{fig:tool} depicts a prototype user interface of such a live programming environment.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.5]{tool}
+\caption{A user interface for a live programming environment.}
+\label{fig:tool}
+\end{figure}
+
+By observing changes in the input-output pairs, the user receives immediate feedback about whether the code is correct without actually analyzing it in detail. Any example that behaves unexpectedly acts as a real-time indication of an error in the code. Further, we plan to integrate recent advances in program synthesis into this framework.
+%``Programming by Example'' (Sec.~\ref{sec:pbe}) is a promising research direction that seeks to automatically derive code from a small set of example executions. In this light,
+If the user notices that the current program for an input value $i$ returns an incorrect value $o$, then she can adjust that value to specify that her intended program should return $o'$ instead. This feedback could allow a tool to automatically synthesize a program which coincides with all given examples (included the modified ones) and which follows the structure of the original code as closely as possible.
+
+To synthesize a suitable program, we need to answer the following questions:
+\begin{itemize}
+\item Which parts of the code need to be modified so that the change is minimal with respect to some metric?%In Sec.~\ref{sec:errors} we outline an algorithm based on MaxSMT to find suitable candidates for the part of code in need of change.
+\item How do we efficiently produce a program from a set of examples?
+%As we show in Sec.~\ref{sec:pbe} there are synthesis algorithms for some types of input/output examples. Our goal is to define a general framework for programming by example.
+We plan to further study existing synthesis approaches: the current work on programming by example is focused either on type-driven synthesis, or on SAT / SMT solvers to prone the search space. We plan to investigate combination techniques, as well as entirely new algorithms for programming by example.
+\item Once we have detected a source of inconsistency between the code and the given examples, and we have synthesized a correct separate code, how can we incorporate those changes so that the structure of the existing code changes as little as possible?
+%We outline our approach in Sec~\ref{sec:repair}.
+\end{itemize}
+
+We plan to extend programming-by-example technologies to fully integrate them with our live programming system. As Fig.~\ref{fig:tool} might indicate, we will develop this system in Haskell, following a long tradition of support that the Yale Computer Science Department provides for the Haskell language. To the best of our knowledge, this is the first time that these techniques will be fully integrated with a mainstream programming language.
+
+We are particularly interested in Haskell to make use of the rich type system to prune the search space more effectively. Supporting type classes, for example, would help eliminate a large class of candidates. Other GHC language extensions will be evaluated on a case-by-case basis. Some might make synthesis easier (Existential Quantification), but others might introduce significant additional complexity (Arrows, Template Haskell).
+
+\iffalse
+
+\subsection{Modularity}
+
+Since our target is a real programming language, scalability plays a vital role. We therefore focus on one method of the program at a time, observe its behavior, and generate suitable examples. However, if the user wants to understand a larger logical code fragment, the examples generated for only one method will likely not illustrate the larger code's behavior well enough. By ``context'', we mean a fragment of the program that we aim to observe; when creating representative examples, the context is an important parameter.
+
+Depending on the size of the context, parts of code in this context might need to be abstracted. The PI's ongoing work on verification of nested data structures will help in developing the right level of abstraction. In our previous work, we developed a separation-logic based tool for automated verification of linked data structures, such as lists and trees \cite{PiskacWZ14, tacasPiskacWZ14, PiskacWZ13}. When extending these results for formal verification of complex data structures, such as hash sets or B-trees (unpublished, ongoing work), we needed to abstract away certain parts once they were formally verified. We believe that applying similar abstraction techniques can help delivering more representative examples.
+
+Haskell is a programming language with strong static typing. While Haskell's rich type system suggests a type-directed approach, the type-checking step necessitates checking all the parts of the program a given fragment references. So unless the fragment only calls code we know to be finished (not under synthesis), we cannot consider the fragment in a context isolated from the rest of the program. To address this issue, we compute method summaries, which make it easier to generate high-quality examples and to more easily correct the code. We plan to adapt an existing tool, HALO \cite{VytiniotisJCR13}, for translating Haskell programs into first-order logic formulas to use in our framework.
+
+Type-directed synthesis is a strategy to prune the search space of candidate functions. Type-directed synthesis for simple inductively defined data types was introduced in \cite{poseraZ15}, but only leverages this simple type information. Although attempting to synthesize across the full feature-set of any modern programming language is impractical  -- C++'s template system is Turing-complete, for instance -- we believe we will be able to support at least the same subset of Haskell as HALO.
+\fi
