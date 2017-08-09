@@ -11,9 +11,6 @@ Programming by example (PBE)~\cite{cypher93,lieberman01,synasc12} is a synthesis
 
 Instead of writing code, the user provides a list of relevant examples and the synthesis tool automatically generates a program. In this way, the examples can be seen as an easily readable and understandable specification. However, even if the synthesized program satisfies all the provided examples, it still might not correspond to the user's intentions. Examples are, by nature, an incomplete specification. We believe that a live programming environment is an ideal framework to address this issue. Since the program continuously interacts with the programming environment, the user can provide new examples that better illustrate her intentions, and a synthesized program can be refined with each new example. We call this approach {\emph{cooperative programming}}.
 
-Overall, our framework should incorporate programming by example technology with
-Haskell. A live programming environment is obtained through a standard
-Haskell REPL (Read Evaluate Print Loop) paradigm. 
 
 \noindent\fbox{%
     \parbox{\textwidth}{%
@@ -21,7 +18,7 @@ A small demo of our envisioned approach is available in the following video \\
 $\qquad$\url{https://www.youtube.com/watch?v=w5aI3N4dq2w}.    }%
 }
 
-In this paper we outline the main research topics that such framework would need to address. 
+In this paper we outline the main research topics that such a framework would need to address. 
 
 One of the major questions is how to provide the ``best'' representative examples, 
 which illustrate the programmer intentions. An approach that fits nicely
@@ -61,7 +58,7 @@ We have previously explored this topic in the context of firewalls~\cite{Hallaha
 %We outline our approach in Sec~\ref{sec:repair}.
 \end{itemize}
 
-We plan to extend programming-by-example technologies to fully integrate them with our live programming system. As Fig.~\ref{fig:tool} might indicate, we will develop this system in Haskell, following a long tradition of support that the Yale Computer Science Department provides for the Haskell language. To the best of our knowledge, this is the first time that these techniques will be fully integrated with a mainstream programming language.
+We plan to extend programming-by-example technologies to fully integrate them with our live programming system. As Fig.~\ref{fig:tool} might indicate, we will develop this system in Haskell, following a long tradition of support that the Yale Computer Science department provides for the Haskell language. To the best of our knowledge, this is the first time that these techniques will be fully integrated with a mainstream programming language.
 %
 %We are particularly interested in Haskell to make use of the rich type system to prune the search space more effectively. Supporting type classes, for example, would help eliminate a large class of candidates. Other GHC language extensions will be evaluated on a case-by-case basis. Some might make synthesis easier (Existential Quantification), but others might introduce significant additional complexity (Arrows, Template Haskell).
 
