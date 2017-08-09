@@ -51,7 +51,8 @@ we need to answer the following questions:
 \begin{itemize}
 \item How can we effectively represent the program to aid reasoning?  As previously mentioned, we plan to use symbolic execution to explore the possible inputs.  However, a major challenge here is scalability- a well known problem for symbolic execution is path explosion.  To address this, we plan to explore a variety of techniques, including aggressive identification and pruning of unhelpful paths, and making use of method summaries to abstract complicated functions.
 \item Which parts of the code need to be modified so that the change is minimal with respect to some metric? In \cite{jose2011cause, pavlinovic2014finding} 
-an algorithm based on MaxSAT/MaxSMT is used to find suitable candidates for the part of code in need of change.
+an algorithm based on MaxSAT/MaxSMT is used to find suitable candidates for the part of code in need of change. Having a representation of the code as a formula, we can apply
+some of those algorithms to identify potential errors.
 \item How do we efficiently produce a program from a set of examples?
 %As we show in Sec.~\ref{sec:pbe} there are synthesis algorithms for some types of input/output examples. Our goal is to define a general framework for programming by example.
 We plan to further study existing synthesis approaches: the current work on programming by example is focused either on type-driven synthesis, or on SAT / SMT solvers to prone the search space. We plan to investigate combination techniques, as well as entirely new algorithms for programming by example.
