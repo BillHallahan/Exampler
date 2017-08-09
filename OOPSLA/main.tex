@@ -64,6 +64,9 @@
 \citestyle{acmauthoryear}   %% For author/year citations
 
 
+\long\def\ruzica#1{{\color{red}{\bf Ruzica: }{\small [#1]}}}
+
+
 \begin{document}
 
 %% Title information
@@ -140,11 +143,16 @@
 %% Note: \begin{abstract}...\end{abstract} environment must come
 %% before \maketitle command
 \begin{abstract}
-Programming by example is a powerful approach to program synthesis and has enjoyed particular success as an aid to novice programmers.
-While the theoretical foundations of programming by example continue to expand the potential for synthesis, it remains a special use case tool.
-Aside from the FlashFill tool embedded within Excel spreadsheets, programming by example is not used by everyday programmers.
+Our goal is to integrate the programming by example (PBE) synthesis approach into a
+live programming paradigm. 
+Programming by example is a powerful approach to program synthesis: the main idea is
+the a programmer will provide a few 
+representative examples, indicating her intentions, and then a PBE tool engine will
+automatically generate code satisfying those examples.
+While the theoretical foundations of the PBE paradigm continue to expand the potential for synthesis, the PBE approach is not widely used by everyday programmers.
 This is in part due to the lack of a native interface to support this new paradigm of programming.
 We propose using live programming to help novice programmers better understand examples as a mode of programming.
+
 \end{abstract}
 
 
@@ -181,8 +189,8 @@ We propose using live programming to help novice programmers better understand e
 %% environment and commands, and keywords command.
 \maketitle
 
-\input{overview}
 \input{goal}
+\input{overview}
 \input{live}
 
 %% Acknowledgments
