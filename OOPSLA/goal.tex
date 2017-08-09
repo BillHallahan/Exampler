@@ -24,7 +24,7 @@ $\qquad$\url{https://www.youtube.com/watch?v=w5aI3N4dq2w}.    }%
 In this paper we outline the main research topics that such framework would need to address. 
 
 One of the major questions is how to provide the ``best'' representative examples, 
-which illustrate the programmer intentions the best. An approach that fits nicely
+which illustrate the programmer intentions. An approach that fits nicely
 in the live programming environment is that there is a list of examples automatically
 generated from the already written code. We believe that a programmer gains a better understanding of her code through observing its execution on a sequence of representative inputs. Thus, we propose extending the programming environment with an interface to explore the code's execution on a set of example input-output pairs. We plan to use a symbolic execution engine to derive these examples.  While there is some existing work on symbolic execution of Haskell, we are currently developing our own symbolic execution engine~\cite{contract, HallahanTAPAS17}.  This work is motivated by the desire for a very general framework, adaptable to a variety of purposes,  that covers a wider range of Haskell than past efforts.
 In addition to the examples automatically found using symbolic execution, extra examples could be optionally provided by the developer. This could be seen as an advanced debugging tool that traces execution on several values in parallel. Fig.~\ref{fig:tool} depicts a prototype user interface of such a live programming environment.
